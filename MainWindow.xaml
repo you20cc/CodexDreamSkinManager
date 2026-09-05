@@ -1,0 +1,82 @@
+<Window
+    x:Class="CodexDreamSkinManager.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Grid x:Name="RootGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- 自定义标题栏：左侧标题 + 右侧主题开关（太阳/月亮） -->
+        <Grid x:Name="TitleBar" Grid.Row="0" Padding="12,0,150,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="Codex Dream Skin" VerticalAlignment="Center" FontWeight="SemiBold" />
+            <Button
+                Grid.Column="2"
+                x:Name="ThemeButton"
+                Click="OnThemeButtonClick"
+                Background="Transparent"
+                BorderThickness="0"
+                Padding="6"
+                VerticalAlignment="Center">
+                <FontIcon x:Name="ThemeIcon" Glyph="&#xE708;" FontSize="16" />
+            </Button>
+        </Grid>
+
+        <NavigationView
+            Grid.Row="1"
+            x:Name="NavView"
+            PaneDisplayMode="Left"
+            IsBackButtonVisible="Collapsed"
+            IsPaneToggleButtonVisible="False"
+            IsSettingsVisible="False"
+            SelectionChanged="OnNavSelectionChanged"
+            DisplayModeChanged="OnNavViewDisplayModeChanged">
+            <NavigationView.Resources>
+                <ResourceDictionary>
+                    <ResourceDictionary.ThemeDictionaries>
+                        <ResourceDictionary x:Key="Dark">
+                            <SolidColorBrush x:Key="NavigationViewDefaultPaneBackground" Color="#1C1C1C" />
+                            <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="#1C1C1C" />
+                            <SolidColorBrush x:Key="NavigationViewContentBackground" Color="#202020" />
+                        </ResourceDictionary>
+                        <ResourceDictionary x:Key="Light">
+                            <SolidColorBrush x:Key="NavigationViewDefaultPaneBackground" Color="#F3F3F3" />
+                            <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="#F3F3F3" />
+                            <SolidColorBrush x:Key="NavigationViewContentBackground" Color="#FFFFFF" />
+                        </ResourceDictionary>
+                    </ResourceDictionary.ThemeDictionaries>
+                </ResourceDictionary>
+            </NavigationView.Resources>
+
+            <NavigationView.MenuItems>
+                <NavigationViewItem Content="概览" Tag="overview" Icon="Home" />
+                <NavigationViewItem Content="主题管理" Tag="themes" Icon="Pictures" />
+                <NavigationViewItem Content="操作与日志" Tag="actions" Icon="Play" />
+            </NavigationView.MenuItems>
+
+            <NavigationView.PaneFooter>
+                <StackPanel x:Name="PaneFooterContent" Padding="16,8" Spacing="8">
+                    <TextBlock Text="状态" Style="{StaticResource CaptionTextBlockStyle}" Opacity="0.6" />
+                    <TextBlock x:Name="RunningStateText" Text="读取中…" />
+                    <TextBlock x:Name="PausedStateText" Text="读取中…" />
+                    <TextBlock x:Name="ThemeNameText" Text="当前主题：读取中…" TextWrapping="Wrap" />
+                    <TextBlock x:Name="EngineStateText" Text="读取中…" />
+                    <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,4,0,0">
+                        <Button Content="主题目录" Click="OnOpenThemesFolderClick" FontSize="12" Padding="8,4" />
+                        <Button Content="状态目录" Click="OnOpenStateFolderClick" FontSize="12" Padding="8,4" />
+                    </StackPanel>
+                    <Button x:Name="RefreshButton" Content="刷新状态" Click="OnRefreshClick" HorizontalAlignment="Stretch" Margin="0,8,0,0" />
+                </StackPanel>
+            </NavigationView.PaneFooter>
+
+            <Frame x:Name="ContentFrame" />
+        </NavigationView>
+    </Grid>
+</Window>

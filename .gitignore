@@ -1,0 +1,17 @@
+# Visual Studio 缓存与用户设置
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# 编译产物
+bin/
+obj/
+
+# NuGet 包
+packages/
+*.nupkg
+
+# 发布输出
+publish/

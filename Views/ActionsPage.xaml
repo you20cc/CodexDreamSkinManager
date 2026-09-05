@@ -1,0 +1,56 @@
+<Page
+    x:Class="CodexDreamSkinManager.Views.ActionsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ScrollViewer>
+        <StackPanel Padding="24" Spacing="20" MaxWidth="760" HorizontalAlignment="Left">
+
+            <StackPanel Spacing="10">
+                <TextBlock Text="操作" Style="{StaticResource SubtitleTextBlockStyle}" />
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Button x:Name="InstallButton" Content="安装 / 更新" Click="OnInstallClick" />
+                    <Button x:Name="StartButton" Content="启动皮肤" Click="OnStartClick" />
+                    <Button x:Name="RestartButton" Content="重启并应用" Click="OnRestartClick" />
+                    <Button x:Name="VerifyButton" Content="验证" Click="OnVerifyClick" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Button x:Name="TrayButton" Content="打开托盘" Click="OnTrayClick" />
+                    <Button x:Name="CloseCodexButton" Content="关闭 Codex" Click="OnCloseCodexClick" />
+                    <Button x:Name="RestoreButton" Content="恢复官方外观" Click="OnRestoreClick" />
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Spacing="8">
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <TextBlock Text="输出" Style="{StaticResource SubtitleTextBlockStyle}" VerticalAlignment="Center" />
+                    <Button x:Name="ClearButton" Content="清空" Click="OnClearClick" FontSize="12" Padding="8,4" />
+                </StackPanel>
+                <TextBox
+                    x:Name="OutputBox"
+                    IsReadOnly="True"
+                    TextWrapping="Wrap"
+                    AcceptsReturn="True"
+                    MinHeight="110"
+                    FontFamily="Consolas"
+                    FontSize="12"
+                    PlaceholderText="等待操作。"
+                    ScrollViewer.VerticalScrollBarVisibility="Auto" />
+            </StackPanel>
+
+            <StackPanel Spacing="8">
+                <TextBlock Text="最近日志" Style="{StaticResource SubtitleTextBlockStyle}" />
+                <TextBox
+                    x:Name="LogsBox"
+                    IsReadOnly="True"
+                    TextWrapping="Wrap"
+                    AcceptsReturn="True"
+                    MinHeight="160"
+                    FontFamily="Consolas"
+                    FontSize="12"
+                    PlaceholderText="暂无日志。"
+                    ScrollViewer.VerticalScrollBarVisibility="Auto" />
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</Page>
