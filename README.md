@@ -43,7 +43,7 @@
 
 「安装 / 更新」只做**本地部署**：把随本工具一起分发的皮肤引擎（PowerShell 脚本 + 资源）复制到本机 `%LOCALAPPDATA%\CodexDreamSkin`、配置 Codex、并创建桌面/开始菜单快捷方式。整个过程离线完成。
 
-想要更新内核版本，去 [GitHub Releases](https://github.com/Fei-Away/Codex-Dream-Skin/releases) 手动下载新版替换引擎文件即可。
+想要更新内核版本，去原项目[GitHub Releases](https://github.com/Fei-Away/Codex-Dream-Skin/releases) 手动下载新版替换引擎文件即可。
 
 ### 各页说明
 
@@ -123,7 +123,7 @@ windows/winui/
 
 ## 🙏 致谢
 
-本项目是 [Codex Dream Skin](https://github.com/Fei-Away/Codex-Dream-Skin) 的 WinUI 3 重写版，皮肤引擎沿用原项目的 PowerShell + Node injector 方案。
+本项目是 [Codex Dream Skin](https://github.com/Fei-Away/Codex-Dream-Skin) 的 WinUI 3 版，图形操作更方便。皮肤引擎沿用原项目的 PowerShell + Node injector 方案。
 
 ## 📄 License
 

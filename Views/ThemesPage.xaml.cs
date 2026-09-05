@@ -19,13 +19,14 @@ public sealed partial class ThemesPage : Page, IStatusPage
     private string _editorThemeId = "custom";
     private bool _editorLoaded;
     private bool _busy;
+    private bool _suppressSave;
 
     public ThemesPage()
     {
         InitializeComponent();
         NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         SavedThemesList.ItemsSource = _savedThemes;
-        _savedThemes.CollectionChanged += (_, _) => SaveOrder();
+        _savedThemes.CollectionChanged += (_, _) => { if (!_suppressSave) SaveOrder(); };
         _orderFile = Path.Combine(AppServices.Status.StateRoot, "gui-theme-order.json");
         _ = RefreshAsync();
     }
@@ -33,11 +34,19 @@ public sealed partial class ThemesPage : Page, IStatusPage
     public async Task RefreshAsync()
     {
         var snap = await AppServices.Status.ReadAsync();
-        _savedThemes.Clear();
-        foreach (var theme in ApplyOrder(snap.SavedThemes))
+        _suppressSave = true;
+        try
         {
-            theme.IsApplied = theme.Id.Length > 0 && theme.Id == snap.ActiveThemeId;
-            _savedThemes.Add(theme);
+            _savedThemes.Clear();
+            foreach (var theme in ApplyOrder(snap.SavedThemes))
+            {
+                theme.IsApplied = theme.Id.Length > 0 && theme.Id == snap.ActiveThemeId;
+                _savedThemes.Add(theme);
+            }
+        }
+        finally
+        {
+            _suppressSave = false;
         }
         if (!_editorLoaded)
         {
