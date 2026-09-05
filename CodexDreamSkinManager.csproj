@@ -28,20 +28,20 @@
   </ItemGroup>
 
   <!--
-    引擎（PowerShell 脚本 + assets）是 GUI 的依赖，编译时复制到输出目录，
-    运行时按 AppContext.BaseDirectory/scripts、/assets 定位并调用。
-    对应 Electron 版 electron-builder 的 extraResources。
+    皮肤引擎（PowerShell 脚本 + assets + VERSION）已随本仓库打包在 engine/ 子目录，
+    编译时复制到输出目录，运行时按 AppContext.BaseDirectory/scripts、/assets 定位并调用。
+    这样仓库自包含：clone 后即可编译，用户点「安装 / 更新」即可部署引擎。
   -->
   <ItemGroup>
-    <Content Include="..\scripts\**\*">
+    <Content Include="engine\scripts\**\*">
       <Link>scripts\%(RecursiveDir)%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\assets\**\*">
+    <Content Include="engine\assets\**\*">
       <Link>assets\%(RecursiveDir)%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\VERSION">
+    <Content Include="engine\VERSION">
       <Link>VERSION</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
