@@ -124,3 +124,7 @@ windows/winui/
 ## 🙏 致谢
 
 本项目是 [Codex Dream Skin](https://github.com/Fei-Away/Codex-Dream-Skin) 的 WinUI 3 重写版，皮肤引擎沿用原项目的 PowerShell + Node injector 方案。
+
+## 📄 License
+
+本项目使用 [MIT License](LICENSE)。
