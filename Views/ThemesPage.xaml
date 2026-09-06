@@ -10,14 +10,21 @@
         </Grid.ColumnDefinitions>
 
         <!-- 左：主题库 -->
-        <StackPanel Grid.Column="0" Spacing="10">
-            <TextBlock Text="主题库" Style="{StaticResource SubtitleTextBlockStyle}" />
-            <StackPanel Orientation="Horizontal" Spacing="8">
+        <Grid Grid.Column="0" RowSpacing="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Text="主题库" Style="{StaticResource SubtitleTextBlockStyle}" />
+            <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="8">
                 <Button x:Name="NewButton" Content="新建" Click="OnNewClick" />
                 <Button x:Name="EditActiveButton" Content="当前" Click="OnEditActiveClick" />
             </StackPanel>
-            <TextBlock x:Name="SavedThemesHint" Text="拖拽可排序" Style="{StaticResource CaptionTextBlockStyle}" Opacity="0.6" />
+            <TextBlock Grid.Row="2" x:Name="SavedThemesHint" Text="拖拽可排序" Style="{StaticResource CaptionTextBlockStyle}" Opacity="0.6" />
             <ListView
+                Grid.Row="3"
                 x:Name="SavedThemesList"
                 CanReorderItems="True"
                 AllowDrop="True"
@@ -39,7 +46,7 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-        </StackPanel>
+        </Grid>
 
         <!-- 右：编辑器 -->
         <ScrollViewer Grid.Column="1">
