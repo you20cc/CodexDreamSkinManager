@@ -1,16 +1,36 @@
+using System.ComponentModel;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
+
 namespace CodexDreamSkinManager.Models;
 
 /// <summary>一个已保存的主题条目（主题库列表项）。</summary>
-public sealed class SavedTheme
+public sealed class SavedTheme : INotifyPropertyChanged
 {
     public string Id { get; set; } = "";
     public string Name { get; set; } = "";
     public string Directory { get; set; } = "";
 
-    /// <summary>是否当前正在应用的主题（用于列表标记）。</summary>
-    public bool IsApplied { get; set; }
+    private bool _isApplied;
+    public bool IsApplied
+    {
+        get => _isApplied;
+        set { if (_isApplied != value) { _isApplied = value; OnPropertyChanged(nameof(IsApplied)); OnPropertyChanged(nameof(AppliedText)); OnPropertyChanged(nameof(AppliedBadgeVisibility)); } }
+    }
+
+    private ImageSource? _thumbnail;
+    public ImageSource? Thumbnail
+    {
+        get => _thumbnail;
+        set { if (!ReferenceEquals(_thumbnail, value)) { _thumbnail = value; OnPropertyChanged(nameof(Thumbnail)); } }
+    }
 
     public string AppliedText => IsApplied ? "已应用" : "应用";
+    public Visibility AppliedBadgeVisibility => IsApplied ? Visibility.Visible : Visibility.Collapsed;
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+    private void OnPropertyChanged(string name)
+        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 }
 
 /// <summary>完整运行状态快照（对应 Electron 版 getStatus）。</summary>

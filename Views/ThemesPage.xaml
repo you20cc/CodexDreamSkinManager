@@ -1,58 +1,75 @@
 <Page
     x:Class="CodexDreamSkinManager.Views.ThemesPage"
+    x:Name="root"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <Grid Padding="16" ColumnSpacing="16">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="300" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
+    <Grid Padding="16" RowSpacing="12">
 
-        <!-- 左：主题库 -->
-        <Grid Grid.Column="0" RowSpacing="10">
+        <!-- ===== 视图一：主题库（默认展示）===== -->
+        <Grid x:Name="LibraryView" RowSpacing="12">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" Text="主题库" Style="{StaticResource SubtitleTextBlockStyle}" />
-            <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="8">
-                <Button x:Name="NewButton" Content="新建" Click="OnNewClick" />
-                <Button x:Name="EditActiveButton" Content="当前" Click="OnEditActiveClick" />
-            </StackPanel>
-            <TextBlock Grid.Row="2" x:Name="SavedThemesHint" Text="拖拽可排序" Style="{StaticResource CaptionTextBlockStyle}" Opacity="0.6" />
-            <ListView
-                Grid.Row="3"
-                x:Name="SavedThemesList"
+
+            <Grid Grid.Row="0" ColumnSpacing="12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="主题库" Style="{StaticResource SubtitleTextBlockStyle}" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="1" Text="点击主题进入编辑 · 拖拽可排序" Style="{StaticResource CaptionTextBlockStyle}" Opacity="0.6" VerticalAlignment="Center" />
+                <Button Grid.Column="3" x:Name="NewButton" Content="新建" Click="OnNewClick" />
+                <Button Grid.Column="4" x:Name="EditActiveButton" Content="编辑当前" Click="OnEditActiveClick" />
+                <Button Grid.Column="5" x:Name="HiddenButton" Content="隐藏主题" Click="OnHiddenClick" />
+                <Button Grid.Column="6" x:Name="SmallSizeButton" Content="小" Click="OnSmallSizeClick" FontSize="12" Padding="8,4" />
+                <Button Grid.Column="7" x:Name="LargeSizeButton" Content="大" Click="OnLargeSizeClick" FontSize="12" Padding="8,4" />
+            </Grid>
+
+            <GridView
+                Grid.Row="1"
+                x:Name="ThemesGrid"
+                SelectionMode="Single"
+                IsItemClickEnabled="True"
                 CanReorderItems="True"
                 AllowDrop="True"
-                ReorderMode="Enabled"
-                SelectionMode="Single"
-                IsItemClickEnabled="False">
-                <ListView.ItemTemplate>
+                ItemClick="OnThemeItemClick">
+                <GridView.ItemTemplate>
                     <DataTemplate>
-                        <Grid ColumnSpacing="8" Padding="4,6">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="{Binding Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
-                            <Button Grid.Column="1" Content="编辑" Tag="{Binding Directory}" Click="OnEditThemeClick" FontSize="12" Padding="8,4" />
-                            <Button Grid.Column="2" Content="{Binding AppliedText}" Tag="{Binding Directory}" Click="OnApplyThemeClick" FontSize="12" Padding="8,4" IsEnabled="{Binding IsApplied, Converter={StaticResource InverseBoolConverter}}" />
-                        </Grid>
+                        <StackPanel Width="{Binding ElementName=root, Path=CardWidth}" Spacing="6" Padding="8">
+                            <!-- 缩略图 -->
+                            <Grid Height="{Binding ElementName=root, Path=CardHeight}">
+                                <Image Source="{Binding Thumbnail}" Stretch="UniformToFill" />
+                                <Border Background="#88000000" Padding="6,2" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="{Binding AppliedBadgeVisibility}">
+                                    <TextBlock Text="当前" FontSize="11" />
+                                </Border>
+                            </Grid>
+                            <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" TextAlignment="Center" FontWeight="SemiBold" />
+                            <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                                <Button Content="应用" Tag="{Binding Directory}" Click="OnApplyThemeClick" FontSize="12" Padding="10,4" IsEnabled="{Binding IsApplied, Converter={StaticResource InverseBoolConverter}}" />
+                                <Button Content="隐藏" Tag="{Binding Directory}" Click="OnHideThemeClick" FontSize="12" Padding="10,4" />
+                                <Button Content="删除" Tag="{Binding Directory}" Click="OnDeleteThemeClick" FontSize="12" Padding="10,4" />
+                            </StackPanel>
+                        </StackPanel>
                     </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+                </GridView.ItemTemplate>
+            </GridView>
         </Grid>
 
-        <!-- 右：编辑器 -->
-        <ScrollViewer Grid.Column="1">
-            <StackPanel Spacing="14">
-                <TextBlock Text="主题编辑" Style="{StaticResource SubtitleTextBlockStyle}" />
-                <TextBlock x:Name="EditorSourceText" Opacity="0.6" />
+        <!-- ===== 视图二：主题编辑（点击主题后展示）===== -->
+        <ScrollViewer x:Name="EditorView" Visibility="Collapsed">
+            <StackPanel Spacing="14" MaxWidth="760" HorizontalAlignment="Left">
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <Button x:Name="BackButton" Content="← 返回主题库" Click="OnBackClick" />
+                    <TextBlock x:Name="EditorSourceText" Style="{StaticResource SubtitleTextBlockStyle}" VerticalAlignment="Center" />
+                </StackPanel>
 
                 <Grid Height="200">
                     <Grid>
@@ -66,6 +83,7 @@
                     <Button x:Name="SaveButton" Content="保存" Click="OnSaveClick" />
                     <Button x:Name="SaveCopyButton" Content="另存主题" Click="OnSaveCopyClick" />
                     <Button x:Name="DeleteButton" Content="删除主题" Click="OnDeleteClick" />
+                    <Button x:Name="HideEditorButton" Content="隐藏主题" Click="OnHideEditorClick" />
                 </StackPanel>
 
                 <Grid ColumnSpacing="12" RowSpacing="10">
@@ -176,5 +194,38 @@
                     ScrollViewer.VerticalScrollBarVisibility="Auto" />
             </StackPanel>
         </ScrollViewer>
+
+        <!-- ===== 视图三：隐藏主题列表 ===== -->
+        <Grid x:Name="HiddenView" Visibility="Collapsed" RowSpacing="12">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="12">
+                <Button Content="← 返回主题库" Click="OnBackClick" />
+                <TextBlock Text="隐藏主题" Style="{StaticResource SubtitleTextBlockStyle}" VerticalAlignment="Center" />
+            </StackPanel>
+
+            <GridView Grid.Row="1" x:Name="HiddenThemesGrid" SelectionMode="None" IsItemClickEnabled="False">
+                <GridView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Width="{Binding ElementName=root, Path=CardWidth}" Spacing="6" Padding="8">
+                            <Grid Height="{Binding ElementName=root, Path=CardHeight}">
+                                <Image Source="{Binding Thumbnail}" Stretch="UniformToFill" />
+                                <Border Background="#88000000" Padding="6,2" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="{Binding AppliedBadgeVisibility}">
+                                    <TextBlock Text="当前" FontSize="11" />
+                                </Border>
+                            </Grid>
+                            <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" TextAlignment="Center" FontWeight="SemiBold" />
+                            <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                                <Button Content="取消隐藏" Tag="{Binding Directory}" Click="OnUnhideThemeClick" FontSize="12" Padding="10,4" />
+                                <Button Content="删除" Tag="{Binding Directory}" Click="OnDeleteThemeClick" FontSize="12" Padding="10,4" />
+                            </StackPanel>
+                        </StackPanel>
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+            </GridView>
+        </Grid>
     </Grid>
 </Page>

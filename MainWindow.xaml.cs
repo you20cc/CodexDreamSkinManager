@@ -70,6 +70,27 @@ public sealed partial class MainWindow : Window
         }
     }
 
+    /// <summary>切换到主题管理页，并直接打开当前主题的编辑器（用于概览页「编辑主题」按钮）。</summary>
+    public void NavigateToThemeEditor()
+    {
+        foreach (var item in NavView.MenuItems)
+        {
+            if (item is NavigationViewItem nvi && string.Equals(nvi.Tag as string, "themes", StringComparison.Ordinal))
+            {
+                NavView.SelectedItem = nvi;
+                break;
+            }
+        }
+        // OnNavSelectionChanged 会导航到 ThemesPage，
+        // 页面构造时 RefreshAsync 会默认加载当前主题到编辑器。
+        // 但 NavigationCacheMode=Required 时页面已缓存、不会重新构造，
+        // 所以需要直接调页面的 LoadEditor。
+        if (ContentFrame.Content is ThemesPage themesPage)
+        {
+            _ = themesPage.LoadCurrentThemeIntoEditor();
+        }
+    }
+
     private static void CenterWindow(AppWindow appWindow)
     {
         var displayArea = DisplayArea.GetFromWindowId(appWindow.Id, DisplayAreaFallback.Primary);
