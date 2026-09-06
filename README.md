@@ -4,6 +4,18 @@
 
 一个轻量的 Windows 桌面工具，用来给 [Codex](https://openai.com/codex)（OpenAI 的编程助手桌面应用）注入自定义皮肤：换背景图、改配色、定制顶栏/输入框样式，让工作台变成你想要的样子。
 
+## 📸 预览
+
+<p align="center">
+  <img src="Assets/1.png" alt="概览页" width="100%" />
+</p>
+<p align="center">
+  <img src="Assets/2.png" alt="主题管理页" width="100%" />
+</p>
+<p align="center">
+  <img src="Assets/3.png" alt="操作与日志页" width="100%" />
+</p>
+
 ## ✨ 功能特性
 
 - **概览**：一键启动皮肤，查看/切换当前主题，实时背景预览
