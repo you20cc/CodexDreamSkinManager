@@ -9,6 +9,7 @@ public sealed partial class OverviewPage : Page, IStatusPage
 {
     private bool _paused;
     private bool _busy;
+    private string? _previewImagePath;
 
     public OverviewPage()
     {
@@ -65,11 +66,16 @@ public sealed partial class OverviewPage : Page, IStatusPage
         if (string.IsNullOrEmpty(imagePath) || !File.Exists(imagePath))
         {
             PreviewImage.Source = null;
+            _previewImagePath = null;
             PreviewPlaceholder.Visibility = Visibility.Visible;
             return;
         }
+        // 路径未变则跳过，避免重复解码图片
+        if (string.Equals(_previewImagePath, imagePath, StringComparison.OrdinalIgnoreCase))
+            return;
+        _previewImagePath = imagePath;
         PreviewPlaceholder.Visibility = Visibility.Collapsed;
-        var bitmap = new BitmapImage();
+        var bitmap = new BitmapImage { DecodePixelWidth = 800 };
         using (var stream = File.OpenRead(imagePath))
         {
             await bitmap.SetSourceAsync(stream.AsRandomAccessStream());

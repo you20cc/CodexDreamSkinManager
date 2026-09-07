@@ -14,6 +14,8 @@ public sealed partial class ThemesPage : Page, IStatusPage
 {
     private readonly ObservableCollection<SavedTheme> _savedThemes = new();
     private readonly ObservableCollection<SavedTheme> _hiddenThemes = new();
+    private readonly Dictionary<string, BitmapImage> _thumbnailCache = new(StringComparer.OrdinalIgnoreCase);
+    private HashSet<string> _lastHiddenSet = new(StringComparer.OrdinalIgnoreCase);
     private readonly string _orderFile;
     private readonly string _hiddenFile;
 
@@ -41,6 +43,21 @@ public sealed partial class ThemesPage : Page, IStatusPage
         var snap = await AppServices.Status.ReadAsync();
         var hidden = LoadHiddenSet();
 
+        // 检查主题列表是否变化（目录路径集合 + 隐藏集合）
+        var currentDirs = _savedThemes.Concat(_hiddenThemes).Select(t => t.Directory).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var newDirs = snap.SavedThemes.Select(t => t.Directory).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var hiddenChanged = !currentDirs.SetEquals(newDirs) ||
+                            !hidden.SetEquals(_lastHiddenSet);
+
+        if (!hiddenChanged)
+        {
+            // 列表没变，只更新应用状态
+            foreach (var theme in _savedThemes.Concat(_hiddenThemes))
+                theme.IsApplied = theme.Id.Length > 0 && theme.Id == snap.ActiveThemeId;
+            return;
+        }
+
+        _lastHiddenSet = hidden;
         _suppressSave = true;
         try
         {
@@ -49,8 +66,6 @@ public sealed partial class ThemesPage : Page, IStatusPage
             foreach (var theme in ApplyOrder(snap.SavedThemes))
             {
                 theme.IsApplied = theme.Id.Length > 0 && theme.Id == snap.ActiveThemeId;
-                // 重置缩略图，让重新加载
-                theme.Thumbnail = null;
                 if (hidden.Contains(theme.Directory))
                 {
                     _hiddenThemes.Add(theme);
@@ -71,21 +86,28 @@ public sealed partial class ThemesPage : Page, IStatusPage
 
     // ---- 缩略图 ----
 
-    private static async Task LoadThumbnailsAsync(IEnumerable<SavedTheme> themes)
+    private async Task LoadThumbnailsAsync(IEnumerable<SavedTheme> themes)
     {
         foreach (var theme in themes)
         {
             if (theme.Thumbnail is not null) continue;
             var imagePath = TryGetThemeImage(theme.Directory);
             if (imagePath is null) continue;
+            // 复用已解码的缩略图，避免每次导航都重新加载图片
+            if (_thumbnailCache.TryGetValue(imagePath, out var cached))
+            {
+                theme.Thumbnail = cached;
+                continue;
+            }
             try
             {
-                var bitmap = new BitmapImage();
+                var bitmap = new BitmapImage { DecodePixelWidth = 300 };
                 using (var stream = File.OpenRead(imagePath))
                 {
                     await bitmap.SetSourceAsync(stream.AsRandomAccessStream());
                 }
                 theme.Thumbnail = bitmap;
+                _thumbnailCache[imagePath] = bitmap;
             }
             catch { /* 跳过损坏图片 */ }
         }
@@ -546,7 +568,7 @@ public sealed partial class ThemesPage : Page, IStatusPage
             return;
         }
         EditorPreviewPlaceholder.Visibility = Visibility.Collapsed;
-        var bitmap = new BitmapImage();
+        var bitmap = new BitmapImage { DecodePixelWidth = 800 };
         using (var stream = File.OpenRead(imagePath))
         {
             await bitmap.SetSourceAsync(stream.AsRandomAccessStream());
